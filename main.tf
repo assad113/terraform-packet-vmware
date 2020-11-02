@@ -67,7 +67,11 @@ resource "packet_device" "router" {
   billing_cycle    = var.billing_cycle
   project_id       = packet_project.new_project.id
   user_data        = data.template_file.user_data.rendered
-  network_type     = "hybrid"
+}
+
+resource “packet_device_network_type” “router” {
+  device_id = packet_device.router.id
+  type = “hybrid”
 }
 
 resource "packet_port_vlan_attachment" "router_priv_vlan_attach" {
@@ -97,7 +101,6 @@ resource "packet_device" "esxi_hosts" {
   operating_system = var.vmware_os
   billing_cycle    = var.billing_cycle
   project_id       = packet_project.new_project.id
-  network_type     = "hybrid"
   ip_address {
     type            = "public_ipv4"
     cidr            = 29
@@ -111,6 +114,11 @@ resource "packet_device" "esxi_hosts" {
   }
 }
 
+resource “packet_device_network_type” “esxi_hosts” {
+  count = var.esxi_host_count
+  device_id = element(packet_device.esxi_hosts.*.id, count.index)
+  type = “hybrid”
+}
 
 resource "packet_port_vlan_attachment" "esxi_priv_vlan_attach" {
   count     = length(packet_device.esxi_hosts) * length(packet_vlan.private_vlans)
@@ -365,4 +373,3 @@ resource "null_resource" "deploy_vcva" {
     ]
   }
 }
-

@@ -73,11 +73,11 @@ variable "router_size" {
 }
 
 variable "esxi_size" {
-  default = "c3.medium.x86"
+  default = "m3.large.x86"
 }
 
 variable "facility" {
-  default = "dfw2"
+  default = "sv15"
 }
 
 variable "router_os" {
